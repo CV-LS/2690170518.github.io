@@ -272,8 +272,8 @@
       <p class="intro">把常用的大模型聊天页面放在一个地方。点击卡片会打开对应官网；如果还没登录，会先进入官网登录流程。</p>
     </section>
 
-    <section class="toolbar" aria-label="入口管理">
-      <p class="hint">自定义入口会保存在当前浏览器中。</p>
+    <section class="toolbar" id="toolbar" aria-label="入口管理" hidden>
+      <p class="hint">管理员模式：自定义入口只保存在当前浏览器中。</p>
       <button type="button" id="addLink">+ 添加网址</button>
     </section>
 
@@ -352,11 +352,22 @@
     ];
 
     const storageKey = "custom-llm-links";
+    const adminStorageKey = "llm-admin-enabled";
+    const adminCode = "2690170518";
     const grid = document.querySelector("#linkGrid");
+    const toolbar = document.querySelector("#toolbar");
     const dialog = document.querySelector("#linkDialog");
     const form = document.querySelector("#linkForm");
     const nameInput = document.querySelector("#linkName");
     const urlInput = document.querySelector("#linkUrl");
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("admin") === adminCode) {
+      localStorage.setItem(adminStorageKey, "true");
+    }
+
+    const isAdmin = localStorage.getItem(adminStorageKey) === "true";
+    toolbar.hidden = !isAdmin;
 
     function loadCustomLinks() {
       try {
@@ -422,7 +433,7 @@
     }
 
     function renderLinks() {
-      const customLinks = loadCustomLinks();
+      const customLinks = isAdmin ? loadCustomLinks() : [];
       grid.replaceChildren(
         ...defaultLinks.map((link) => renderCard(link, 0, false)),
         ...customLinks.map((link, index) => renderCard(link, index, true))
