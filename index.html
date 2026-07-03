@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM 快捷入口</title>
+  <meta name="description" content="常用 LLM 聊天工具快捷入口。">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #162033;
+      --muted: #647086;
+      --line: #d8e0ec;
+      --accent: #1f7a5a;
+      --accent-strong: #155f47;
+      --shadow: 0 18px 45px rgba(31, 48, 77, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(31, 122, 90, 0.15), transparent 34rem),
+        linear-gradient(135deg, #f4f7fb 0%, #eef3f6 45%, #f8f1e9 100%);
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--accent-strong);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.3rem, 7vw, 5.2rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.75;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 32px 0 22px;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 16px;
+      color: #fff;
+      background: var(--accent);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(31, 122, 90, 0.22);
+    }
+
+    button:hover {
+      background: var(--accent-strong);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      display: grid;
+      min-height: 176px;
+      padding: 20px;
+      border: 1px solid rgba(216, 224, 236, 0.86);
+      border-radius: 8px;
+      color: inherit;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(31, 122, 90, 0.45);
+      box-shadow: 0 22px 55px rgba(31, 48, 77, 0.16);
+    }
+
+    .mark {
+      display: inline-grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--tone, var(--accent));
+      font-weight: 800;
+    }
+
+    .card h2 {
+      margin: 18px 0 8px;
+      font-size: 1.25rem;
+      letter-spacing: 0;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.58;
+    }
+
+    .card small {
+      align-self: end;
+      margin-top: 18px;
+      color: var(--accent-strong);
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .remove {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: none;
+      min-width: 34px;
+      min-height: 34px;
+      padding: 0;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: none;
+    }
+
+    .card.custom .remove {
+      display: inline-grid;
+      place-items: center;
+    }
+
+    dialog {
+      width: min(440px, calc(100% - 32px));
+      border: 0;
+      border-radius: 8px;
+      padding: 0;
+      box-shadow: 0 24px 80px rgba(18, 30, 48, 0.28);
+    }
+
+    dialog::backdrop {
+      background: rgba(18, 30, 48, 0.38);
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+      background: var(--panel);
+    }
+
+    form h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      color: var(--text);
+      background: transparent;
+      font: inherit;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .secondary {
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .secondary:hover {
+      color: var(--text);
+      background: rgba(100, 112, 134, 0.09);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #10151d;
+        --panel: #171f2b;
+        --text: #eef4ff;
+        --muted: #a8b4c5;
+        --line: #2d3a4d;
+        --accent: #47b889;
+        --accent-strong: #72d6a8;
+        --shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top left, rgba(71, 184, 137, 0.18), transparent 34rem),
+          linear-gradient(135deg, #10151d 0%, #17202b 54%, #1d1b24 100%);
+      }
+
+      .card {
+        background: rgba(23, 31, 43, 0.9);
+      }
+
+      .remove {
+        background: rgba(23, 31, 43, 0.92);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">2690170518@qq.com</p>
+      <h1 id="page-title">LLM 快捷入口</h1>
+      <p class="intro">把常用的大模型聊天页面放在一个地方。点击卡片会打开对应官网；如果还没登录，会先进入官网登录流程。</p>
+    </section>
+
+    <section class="toolbar" aria-label="入口管理">
+      <p class="hint">自定义入口会保存在当前浏览器中。</p>
+      <button type="button" id="addLink">+ 添加网址</button>
+    </section>
+
+    <section class="grid" id="linkGrid" aria-label="LLM 入口"></section>
+  </main>
+
+  <dialog id="linkDialog">
+    <form method="dialog" id="linkForm">
+      <h2>添加网址</h2>
+      <label>
+        名称
+        <input id="linkName" name="name" maxlength="32" placeholder="例如：Perplexity" required>
+      </label>
+      <label>
+        网址
+        <input id="linkUrl" name="url" type="url" placeholder="https://example.com" required>
+      </label>
+      <div class="actions">
+        <button class="secondary" type="button" id="cancelDialog">取消</button>
+        <button type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const defaultLinks = [
+      {
+        name: "Kimi",
+        description: "Moonshot AI 的长文本与多场景助手。",
+        url: "https://www.kimi.com/",
+        initials: "Ki",
+        tone: "#2f6fed"
+      },
+      {
+        name: "智谱 GLM",
+        description: "智谱清言，适合中文问答、写作与办公。",
+        url: "https://chatglm.cn/",
+        initials: "GL",
+        tone: "#7a4fe8"
+      },
+      {
+        name: "DeepSeek",
+        description: "DeepSeek 官方聊天入口。",
+        url: "https://chat.deepseek.com/",
+        initials: "DS",
+        tone: "#3157c9"
+      },
+      {
+        name: "豆包",
+        description: "字节跳动旗下 AI 助手。",
+        url: "https://www.doubao.com/chat/",
+        initials: "豆",
+        tone: "#d65a31"
+      },
+      {
+        name: "Qwen",
+        description: "通义千问官方聊天页面。",
+        url: "https://chat.qwen.ai/",
+        initials: "Qw",
+        tone: "#16836a"
+      },
+      {
+        name: "ChatGPT",
+        description: "OpenAI 的 ChatGPT 聊天入口。",
+        url: "https://chatgpt.com/",
+        initials: "GPT",
+        tone: "#111827"
+      },
+      {
+        name: "Claude / Claude Code",
+        description: "Claude 聊天与 Claude Code 产品入口。",
+        url: "https://claude.ai/",
+        initials: "Cl",
+        tone: "#8f5a3c"
+      }
+    ];
+
+    const storageKey = "custom-llm-links";
+    const grid = document.querySelector("#linkGrid");
+    const dialog = document.querySelector("#linkDialog");
+    const form = document.querySelector("#linkForm");
+    const nameInput = document.querySelector("#linkName");
+    const urlInput = document.querySelector("#linkUrl");
+
+    function loadCustomLinks() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveCustomLinks(links) {
+      localStorage.setItem(storageKey, JSON.stringify(links));
+    }
+
+    function normalizeUrl(url) {
+      const trimmed = url.trim();
+      if (/^https?:\/\//i.test(trimmed)) {
+        return trimmed;
+      }
+      return `https://${trimmed}`;
+    }
+
+    function renderCard(link, index, isCustom) {
+      const card = document.createElement("a");
+      card.className = isCustom ? "card custom" : "card";
+      card.href = link.url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+      card.style.setProperty("--tone", link.tone || "#1f7a5a");
+
+      const mark = document.createElement("span");
+      mark.className = "mark";
+      mark.textContent = link.initials;
+
+      const title = document.createElement("h2");
+      title.textContent = link.name;
+
+      const description = document.createElement("p");
+      description.textContent = link.description;
+
+      const host = document.createElement("small");
+      host.textContent = new URL(link.url).hostname;
+
+      card.append(mark, title, description, host);
+
+      if (isCustom) {
+        const remove = document.createElement("button");
+        remove.className = "remove";
+        remove.type = "button";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", `删除 ${link.name}`);
+        remove.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const customLinks = loadCustomLinks();
+          customLinks.splice(index, 1);
+          saveCustomLinks(customLinks);
+          renderLinks();
+        });
+        card.append(remove);
+      }
+
+      return card;
+    }
+
+    function renderLinks() {
+      const customLinks = loadCustomLinks();
+      grid.replaceChildren(
+        ...defaultLinks.map((link) => renderCard(link, 0, false)),
+        ...customLinks.map((link, index) => renderCard(link, index, true))
+      );
+    }
+
+    document.querySelector("#addLink").addEventListener("click", () => {
+      form.reset();
+      dialog.showModal();
+      nameInput.focus();
+    });
+
+    document.querySelector("#cancelDialog").addEventListener("click", () => {
+      dialog.close();
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = nameInput.value.trim();
+      const url = normalizeUrl(urlInput.value);
+      const customLinks = loadCustomLinks();
+
+      customLinks.push({
+        name,
+        description: "自定义快捷入口。",
+        url,
+        initials: name.slice(0, 2).toUpperCase(),
+        tone: "#1f7a5a"
+      });
+
+      saveCustomLinks(customLinks);
+      dialog.close();
+      renderLinks();
+    });
+
+    renderLinks();
+  </script>
+</body>
+</html>
